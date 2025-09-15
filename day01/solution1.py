@@ -19,3 +19,6 @@ for i in range(len(leftNums)):
     total += abs(leftNums[i] - rightNums[i])
 
 print(total)
+
+#Time Complexity: O(nlog(n))
+#Space Complexity: O(n)
