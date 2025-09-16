@@ -18,8 +18,6 @@ for instruction in instructions:
 print(tracker)
 
 res = []
-
-
 for page in pages:
     seen = set()  
     pages_set = set(page)   
