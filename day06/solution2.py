@@ -24,6 +24,8 @@ class Solution:
         r, c = self.pos
         self.grid[r][c] = "X"
         direction = "up"
+        visited = {(r,c)}
+
 
         moves = {
             "up":(-1, 0),
@@ -33,7 +35,7 @@ class Solution:
         }
 
         order = ["up", "right", "down", "left"]
-
+        
         while True:
             dr, dc = moves[direction]
             nr = r + dr
@@ -47,23 +49,55 @@ class Solution:
                     direction = order[idx]
                 else:
                     r, c = nr, nc
-                    self.grid[r][c] = "X"
+                    visited.add((r,c))
+        return visited
+
+    def simulateWalkWithLoopCheck(self):
+        r, c = self.pos
+        self.grid[r][c] = "X"
+        direction = "up"
+        visited = {(r,c, direction)}
+
+        moves = {
+            "up":(-1, 0),
+            "down":(1, 0),
+            "right":(0, 1),
+            "left":(0, -1)
+        }
+
+        order = ["up", "right", "down", "left"]
         
-    def countX(self):
-        count = 0
-        for r in range(self.rows):
-            for c in range(self.cols):
-                if self.grid[r][c] == "X":
-                    count += 1
-        return count
-            
+        while True:
+            dr, dc = moves[direction]
+            nr = r + dr
+            nc = c + dc
+
+            if not (0 <= nr < self.rows and 0 <= nc < self.cols):
+                break
+            else:
+                if self.grid[nr][nc] not in [".", "X"]:
+                    idx = (order.index(direction) + 1) % 4
+                    direction = order[idx]
+                else:
+                    r, c = nr, nc
+                    if (r,c,direction) in visited:
+                        return True
+                    else:
+                        visited.add((r,c, direction))
+        return False       
     
     def run(self):
         self.readfile()
         self.findPos()
-        self.simulateWalk()
-        self.printGrid()
-        print(self.countX())
+        visited = self.simulateWalk()
+        counter = 0
+        for (r,c) in visited:
+            self.grid[r][c] = "#"
+            if self.simulateWalkWithLoopCheck():
+                counter += 1
+            self.grid[r][c] = "."
+            print(counter)
+        
 
 
 if __name__ == "__main__":
