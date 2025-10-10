@@ -27,57 +27,39 @@ class Solution:
             # Get the max file ID
             max_file_id = max(id for id in disk if id is not None)
             print(f"Processing {max_file_id + 1} files, disk size: {len(disk)}")
-            
+            min_file_id = min(id for id in disk if id is not None)
             # Process files in descending order (largest index first)
-            for file_id in range(max_file_id, -1, -1):
+            for file_id in range(max_file_id, min_file_id-1, -1):
                 if file_id % 100 == 0:
                     print(f"Processing file ID: {file_id}")
-                
-                # Find the current position and size of this file using diskCounts
                 file_size = self.diskCounts.get(file_id, 0)
-                if file_size == 0:
+                if file_size == 0:  # Skip files with size 0
                     continue
-                
-                # Find where this file currently is
-                file_start = None
-                for i in range(len(disk)):
-                    if disk[i] == file_id:
-                        file_start = i
-                        break
-                
-                if file_start is None:
+
+                if file_id not in disk:  # Skip if file not in disk
                     continue
-                
-                # Try to find a contiguous free space to the left
-                free_start = None
+                current_location = disk.index(file_id)
                 i = 0
-                while i < file_start:
-                    if disk[i] is None:
-                        # Found start of a free space, check if it's big enough
-                        free_count = 0
-                        j = i
-                        while j < file_start and disk[j] is None:
-                            free_count += 1
+                #Look for space
+                while i < current_location:
+                    if disk[i] == None:
+                        j = i + 1
+                        space = 1
+                        while j < len(disk) and not disk[j]:
+                            space += 1
                             j += 1
                         
-                        if free_count >= file_size:
-                            free_start = i
+                        if space >= file_size:
+                            for k in range(file_size):
+                                disk[current_location + k] = None
+                            for k in range(file_size):
+                                disk[i + k] = file_id
                             break
-                        i = j
+                        i = j  # Skip the space we just checked and continue
                     else:
                         i += 1
-                
-                # If we found a suitable space, move the file
-                if free_start is not None:
-                    # Clear the old position
-                    for k in range(file_size):
-                        disk[file_start + k] = None
-                    # Place file in new position
-                    for k in range(file_size):
-                        disk[free_start + k] = file_id
-            
             res.append(self.calculateCheckSum(disk))
-            #print(disk)
+                
         print(res)
 
     def calculateCheckSum(self, s):
