@@ -31,26 +31,28 @@ class Solution:
 
     
     def findAntiNodePosition(self, c1, c2):
+        res = []
         x1, y1 = c1
         x2, y2 = c2
 
-        x3 = x1 + (x1-x2)
-        y3 = y1 + (y1-y2)
-        c3 = (x3, y3)
+        dx1 = x1-x2
+        dy1 = y1-y2
 
-        x4 = x2 + (x2-x1)
-        y4 = y2 + (y2-y1)
-        c4 = (x4, y4)
-
-        res = []
-        if self.valid(c3):
-            res.append(c3)
-        if self.valid(c4):
-            res.append(c4)
+        dx2 = x2-x1
+        dy2 = y2-y1
         
+        while self.valid(c1):
+            res.append(c1)
+            x1 += dx1
+            y1 += dy1
+            c1 = (x1, y1)
+
+        while self.valid(c2):
+            res.append(c2)
+            x2 += dx2
+            y2 += dy2
+            c2 = (x2, y2)
         return res
-
-
     
     def valid(self, c):
         x, y = c
