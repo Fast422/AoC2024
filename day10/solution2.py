@@ -16,23 +16,26 @@ class Solution:
                     self.starts.add((r,c))
         print(self.starts)
         dirs = [(0, 1), (0, -1), (-1, 0), (1, 0)]
-        self.score = 0
 
         def findScore(r, c, visited):
             if self.grid[r][c] == "9":
-                self.score += 1
-                return
+                return 1
 
+            total = 0
             for dr, dc in dirs:
                 nr = r + dr
                 nc = c + dc
                 if 0 <= nr < self.rows and 0 <= nc < self.cols and (nr, nc) not in visited and self.grid[nr][nc] == str(int(self.grid[r][c]) + 1):
                     visited.add((nr, nc))
-                    findScore(nr, nc, visited)
+                    total += findScore(nr, nc, visited.copy())
+            return total
         
+        self.total = 0
         for r, c in self.starts:
-            findScore(r, c, set()) 
-        print(self.score)
+            rating = findScore(r, c, set()) 
+            print(rating)
+            self.total += rating
+        print(self.total)
         
 
 if __name__ == "__main__":
